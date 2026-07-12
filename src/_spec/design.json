@@ -1,0 +1,203 @@
+{
+  "aesthetic": "pinterest-inspired",
+  "layout_archetype": "sidebar-app",
+  "design_reference": "pinterest",
+  "fonts": {
+    "display": {
+      "family": "Pin Sans",
+      "weights": [
+        600,
+        700,
+        800
+      ]
+    },
+    "body": {
+      "family": "Pin Sans",
+      "weights": [
+        400,
+        500,
+        600
+      ]
+    }
+  },
+  "tokens": {
+    "colors": {
+      "accent": "#e60023",
+      "bg": "#ffffff",
+      "border": "#dadad3",
+      "primary": "#e60023",
+      "scheme": "light",
+      "secondary": "#262622",
+      "text": "#000000",
+      "textSecondary": "#33332e"
+    },
+    "typography": {
+      "bodyFont": "Pin Sans",
+      "displayFont": "Pin Sans",
+      "fontFamily": "'Inter', 'ui-sans-serif', 'system-ui', sans-serif",
+      "fontType": "sans-serif"
+    },
+    "radii": {
+      "default": "lg (0.5rem) for cards/buttons, pill shape for category/search",
+      "full": "9999px",
+      "lg": "1rem",
+      "sm": "0.25rem"
+    },
+    "shadows": {
+      "default": "md for cards/sections, lg for modals and popouts",
+      "lg": "0 8px 24px rgba(0,0,0,0.2)",
+      "md": "0 4px 12px rgba(0,0,0,0.15)",
+      "sm": "0 1px 3px rgba(0,0,0,0.1)"
+    },
+    "spacing": {
+      "2xl": "6rem",
+      "lg": "2rem",
+      "md": "1rem",
+      "sm": "0.5rem",
+      "xl": "4rem",
+      "xs": "0.25rem"
+    }
+  },
+  "shared_components": [
+    {
+      "name": "Header",
+      "path": "src/components/Header.jsx",
+      "purpose": "Provide global navigation and access to search, profile, and other critical actions.",
+      "props": []
+    },
+    {
+      "name": "Sidebar",
+      "path": "src/components/Sidebar.jsx",
+      "purpose": "Category-based navigation and filter for the pin feed.",
+      "props": []
+    },
+    {
+      "name": "MasonryPinFeed",
+      "path": "src/components/MasonryPinFeed.jsx",
+      "purpose": "Display the main scrollable feed of pins in a masonry grid.",
+      "props": []
+    },
+    {
+      "name": "PinCard",
+      "path": "src/components/PinCard.jsx",
+      "purpose": "Preview an individual pin with social actions and hover UI.",
+      "props": []
+    },
+    {
+      "name": "PinDetailsModal",
+      "path": "src/components/PinDetailsModal.jsx",
+      "purpose": "Show pin details, comments, and related content in an immersive modal.",
+      "props": []
+    },
+    {
+      "name": "CommentsSection",
+      "path": "src/components/CommentsSection.jsx",
+      "purpose": "Let users read and add comments on pins.",
+      "props": []
+    },
+    {
+      "name": "LoadingSkeleton",
+      "path": "src/components/LoadingSkeleton.jsx",
+      "purpose": "Show loading UI while pins/comments are fetching.",
+      "props": []
+    },
+    {
+      "name": "ToastNotifications",
+      "path": "src/components/ToastNotifications.jsx",
+      "purpose": "Inform users about actions and system messages.",
+      "props": []
+    },
+    {
+      "name": "ScrollToTopButton",
+      "path": "src/components/ScrollToTopButton.jsx",
+      "purpose": "Allow quick scroll to top for infinite feeds.",
+      "props": []
+    },
+    {
+      "name": "DarkModeToggle",
+      "path": "src/components/DarkModeToggle.jsx",
+      "purpose": "Let users switch dark/light modes.",
+      "props": []
+    },
+    {
+      "name": "Footer",
+      "path": "src/components/Footer.jsx",
+      "purpose": "Global site footer with info and navigation links.",
+      "props": []
+    },
+    {
+      "name": "AuthModal",
+      "path": "src/components/AuthModal.jsx",
+      "purpose": "App-wide login/signup dialog. This is the SINGLE auth surface — no /login route exists in this project.",
+      "props": []
+    }
+  ],
+  "pages": [
+    {
+      "name": "Home",
+      "route": "/",
+      "file": "src/pages/Home.jsx",
+      "uses": [
+        "Header",
+        "Sidebar",
+        "MasonryPinFeed",
+        "PinDetailsModal",
+        "ToastNotifications",
+        "ScrollToTopButton",
+        "Footer"
+      ],
+      "layout_plan": [
+        {
+          "section": "shell",
+          "composition": "Persistent left sidebar/rail navigation + a main content panel — an app shell, NOT a centered marketing column."
+        },
+        {
+          "section": "hero-panel",
+          "composition": "Main-panel hero: headline + primary action beside a dashboard/product preview card."
+        },
+        {
+          "section": "feature-grid",
+          "composition": "Bento-style tiles inside the content panel (unequal sizes)."
+        },
+        {
+          "section": "cta",
+          "composition": "Inline CTA card pinned within the content panel."
+        }
+      ]
+    }
+  ],
+  "nav_links": [
+    {
+      "label": "Home",
+      "route": "/"
+    }
+  ],
+  "footer_links": [
+    {
+      "label": "About",
+      "route": "/about"
+    },
+    {
+      "label": "Privacy",
+      "route": "/privacy"
+    },
+    {
+      "label": "Terms",
+      "route": "/terms"
+    },
+    {
+      "label": "Contact",
+      "route": "/contact"
+    },
+    {
+      "label": "GitHub",
+      "route": "https://github.com/"
+    }
+  ],
+  "primary_cta": {
+    "label": "Get Started",
+    "target_route": "#auth-modal"
+  },
+  "auth_pattern": "modal",
+  "notes": "TYPOGRAPHY (from the pinterest design system — use these EXACT family stacks as the CSS font-family; apply via inline style fontFamily or a Tailwind arbitrary value): display \"Pin Sans\" for headings/hero, body \"Pin Sans\" for body/labels. These are proprietary/system fonts — do NOT add a Google Fonts \u003clink\u003e; the system fallback baked into the stack is intentional and correct. Never substitute a serif.\n\nDesign DNA: Modern, bold, airy layout with lots of negative space. Bold red #E60023 as accent for main CTAs, white backgrounds, subtle neutral grays for neutral elements, readable sans-serif font, pill-shaped buttons, minimal glass for overlays. Smooth motion everywhere. Fully dark-mode capable.. Animation: Framer Motion fade/pop for all modals, buttons, skeletons. Interaction: Hover lifts, button active scales, scroll-to-top animates, infinite scroll fetch.. Color scheme: light.\n\nLAYOUT ARCHETYPE: sidebar-app — build each page from its layout_plan; do NOT collapse into a centered hero followed by a uniform 3-card grid and footer. A card grid, if used, is at most ONE section among differently-composed sections.\n\nREFERENCE DESIGN SYSTEM: pinterest — this is THIS project's design system. USE its palette (tokens.colors above are taken from it) and its font stacks. DISTILL its component treatments (buttons, cards, nav), type scale + tracking, spacing rhythm, and depth/shadow system, and match its level of polish. Do NOT fall back to generic defaults (raw Tailwind gray text, #3B82F6 blue, system fonts) or invent an unrelated purple/dark theme. Brief follows:\n\n---\nversion: alpha\nname: Pinterest-design-analysis\ndescription: |\n  A photography-first discovery system organized around the Pinterest Red CTA, the masonry pin grid, and a soft warm-cream chrome that gets out of the imagery's way. The home page is a content-discovery tool wearing the chrome of a magazine publisher: 70px display headlines, friendly Pin Sans typography, fully-rounded pill buttons (16px) on a cream-tinted neutral palette, and a sticky red \"Sign up\" CTA that anchors every viewport. Pin imagery is the system's load-bearing visual element — square, portrait, and landscape pins tile in a column-based masonry grid where each tile is a fully-rounded 16px-radius card, separated by tight 8px gutters. The chrome is otherwise quiet: warm grays, true whites, and a single saturated red — no decorative gradients, no atmospheric backgrounds, no shadows beyond a soft modal scrim.\n\ncolors:\n  primary: \"#e60023\"\n  on-primary: \"#ffffff\"\n  primary-pressed: \"#cc001f\"\n  ink: \"#000000\"\n  ink-soft: \"#211922\"\n  body: \"#33332e\"\n  charcoal: \"#262622\"\n  mute: \"#62625b\"\n  ash: \"#91918c\"\n  stone: \"#c8c8c1\"\n  hairline: \"#dadad3\"\n  hairline-soft: \"#e5e5e0\"\n  on-secondary: \"#000000\"\n  secondary-bg: \"#e5e5e0\"\n  secondary-pressed: \"#c8c8c1\"\n  canvas: \"#ffffff\"\n  surface-soft: \"#fbfbf9\"\n  surface-card: \"#f6f6f3\"\n  surface-elevated: \"#ffffff\"\n  on-dark: \"#ffffff\"\n  on-dark-mute: \"rgba(255,255,255,0.7)\"\n  surface-dark: \"#262622\"\n  focus-outer: \"#435ee5\"\n  focus-inner: \"#ffffff\"\n  accent-pressed-blue: \"#617bff\"\n  accent-purple: \"#7e238b\"\n  accent-purple-deep: \"#6845ab\"\n  success-deep: \"#103c25\"\n  success-pale: \"#c7f0da\"\n  error: \"#9e0a0a\"\n  error-deep: \"#cc001f\"\n\ntypography:\n  display-xl:\n    fontFamily: Pin Sans\n    fontSize: 70px\n    fontWeight: 600\n    lineHeight: 1.1\n    letterSpacing: -1.2px\n  display-lg:\n    fontFamily: Pin Sans\n    fontSize: 44px\n    fontWeight: 700\n    lineHeight: 1.15\n    letterSpacing: -0.8px\n  heading-xl:\n    fontFamily: Pin Sans\n    fontSize: 28px\n    fontWeight: 700\n    lineHeight: 1.2\n    letterSpacing: -1.2px\n  heading-lg:\n    fontFamily: Pin Sans\n    fontSize: 22px\n    fontWeight: 600\n    lineHeight: 1.25\n    letterSpacing: 0\n  heading-md:\n    fontFamily: Pin Sans\n    fontSize: 18px\n    fontWeight: 600\n    lineHeight: 1.3\n    letterSpacing: 0\n  body-md:\n    fontFamily: Pin Sans\n    fontSize: 16px\n    fontWeight: 400\n    lineHeight: 1.4\n    letterSpacing: 0\n  body-strong:\n    fontFamily: Pin Sans\n    fontSize: 16px\n    fontWeight: 600\n    lineHeight: 1.4\n    letterSpacing: 0\n  body-sm:\n    fontFamily: Pin Sans\n    fontSize: 14px\n    fontWeight: 400\n    lineHeight: 1.4\n    letterSpacing: 0\n  body-sm-strong:\n    fontFamily: Pin Sans\n    fontSize: 14px\n    fontWeight: 700\n    lineHeight: 1.4\n    letterSpacing: 0\n  caption-md:\n    fontFamily: Pin Sans\n    fontSize: 12px\n    fontWeight: 500\n    lineHeight: 1.5\n    letterSpacing: 0\n  caption-sm:\n    fontFamily: Pin Sans\n    fontSize: 12px\n    fontWeight: 400\n    lineHeight: 1.4\n    letterSpacing: 0\n  link-md:\n    fontFamily: Pin Sans\n    fontSize: 16px\n    fontWeight: 600\n    lineHeight: 1.4\n    letterSpacing: 0\n  button-md:\n    fontFamily: Pin Sans\n    fontSize: 14px\n    fontWeight: 700\n    lineHeight: 1\n    letterSpacing: 0\n  button-sm:\n    fontFamily: Pin Sans\n    fontSize: 12px\n    fontWeight: 700\n    lineHeight: 1\n    letterSpacing: 0\n\nrounded:\n  none: 0px\n  sm: 8px\n  md: 16px\n  lg: 32px\n  full: 9999px\n\nspacing:\n  xxs: 4px\n  xs: 6px\n  sm: 8px\n  md: 12px\n  lg: 16px\n  xl: 24px\n  xxl: 32px\n  section: 64px\n\ncomponents:\n  button-primary:\n    backgroundColor: \"{colors.primary}\"\n    textColor: \"{colors.on-primary}\"\n    typography: \"{typography.button-md}\"\n    rounded: \"{rounded.md}\"\n    padding: 6px 14px\n    height: 40px\n  button-primary-pressed:\n    backgroundColor: \"{colors.primary-pressed}\"\n    textColor: \"{colors.on-primary}\"\n    typography: \"{typography.button-md}\"\n    rounded: \"{rounded.md}\"\n  button-secondary:\n    backgroundColor: \"{colors.secondary-bg}\"\n    textColor: \"{colors.on-secondary}\"\n    typography: \"{typography.button-md}\"\n    rounded: \"{rounded.md}\"\n    padding: 6px 14px\n    height: 40px\n  button-secondary-pressed:\n    backgroundColor: \"{colors.secondary-pressed}\"\n    textColor: \"{colors.on-secondary}\"\n    typography: \"{typography.button-md}\"\n    rounded: \"{rounded.md}\"\n  button-tertiary:\n    backgroundColor: \"transparent\"\n    textColor: \"{colors.ink}\"\n    typography: \"{typography.button-md}\"\n    rounded: \"{rounded.md}\"\n  button-icon-circular:\n    backgroundColor: \"{colors.surface-card}\"\n    textColor: \"{colors.ink}\"\n    rounded: \"{rounded.full}\"\n    size: 40px\n  button-pill-on-image:\n    backgroundColor: \"{colors.canvas}\"\n    textColor: \"{colors.ink}\"\n    typography: \"{typography.button-md}\"\n    rounded: \"{rounded.full}\"\n    padding: 8px 14px\n  button-disabled:\n    backgroundColor: \"{colors.surface-card}\"\n    textColor: \"{colors.ash}\"\n    rounded: \"{rounded.md}\"\n  search-bar:\n    backgroundColor: \"{colors.surface-card}\"\n    textColor: \"{colors.ink}\"\n    typography: \"{typography.body-md}\"\n    rounded: \"{rounded.full}\"\n    padding: 11px 15px\n    height: 48px\n  search-bar-focused:\n    backgroundColor: \"{colors.canvas}\"\n    textColor: \"{colors.ink}\"\n    rounded: \"{rounded.full}\"\n  text-input:\n    backgroundColor: \"{colors.canvas}\"\n    textColor: \"{colors.ink}\"\n    typography: \"{typography.body-md}\"\n    rounded: \"{rounded.md}\"\n    padding: 11px 15px\n    height: 44px\n  text-input-focused:\n    backgroundColor: \"{colors.canvas}\"\n    textColor: \"{colors.ink}\"\n    rounded: \"{rounded.md}\"\n  pin-card:\n    backgroundColor: \"{colors.surface-card}\"\n    textColor: \"{colors.ink}\"\n    rounded: \"{rounded.md}\"\n    padding: 0px\n  pin-card-large:\n    backgroundColor: \"{colors.surface-card}\"\n    textColor: \"{colors.ink}\"\n    rounded: \"{rounded.lg}\"\n    padding: 0px\n  pin-overlay-pill:\n    backgroundColor: \"{colors.canvas}\"\n    textColor: \"{colors.ink}\"\n    typography: \"{typography.button-sm}\"\n    rounded: \"{rounded.full}\"\n    padding: 6px 12px\n  filter-chip:\n    backgroundColor: \"{colors.surface-card}\"\n    textColor: \"{colors.ink}\"\n    typography: \"{typography.button-md}\"\n    rounded: \"{rounded.full}\"\n    padding: 8px 16px\n  filter-chip-active:\n    backgroundColor: \"{colors.ink}\"\n    textColor: \"{colors.on-dark}\"\n    typography: \"{typography.button-md}\"\n    rounded: \"{rounded.full}\"\n  category-tile:\n    backgroundColor: \"{colors.surface-card}\"\n    textColor: \"{colors.ink}\"\n    typography: \"{typography.body-strong}\"\n    rounded: \"{rounded.md}\"\n    padding: 16px\n  feature-card:\n    backgroundColor: \"{colors.canvas}\"\n    textColor: \"{colors.ink}\"\n    typography: \"{typography.heading-xl}\"\n    rounded: \"{rounded.md}\"\n    padding: 32px\n  feature-card-soft:\n    backgroundColor: \"{colors.surface-card}\"\n    textColor: \"{colors.ink}\"\n    typography: \"{typography.heading-xl}\"\n    rounded: \"{rounded.md}\"\n    padding: 32px\n  modal-card:\n    backgroundColor: \"{colors.canvas}\"\n    textColor: \"{colors.ink}\"\n    typography: \"{typograp\n…(brief truncated)\n"
+}
