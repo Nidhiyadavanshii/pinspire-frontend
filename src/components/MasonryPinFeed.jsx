@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { API_BASE_URL } from "../config/api";
+import { apiGet } from "../config/api";
 
 export default function MasonryPinFeed() {
   const [pins, setPins] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchPins();
@@ -11,12 +12,25 @@ export default function MasonryPinFeed() {
 
   const fetchPins = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/pins/all`);
-      setPins(res.data);
-    } catch (error) {
-      console.log("Error fetching pins:", error);
+      setLoading(true);
+      const data = await apiGet("/api/pins/all");
+      setPins(data || []);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching pins:", err);
+      setError("Failed to load pins");
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return <p style={{ padding: "20px" }}>Loading pins...</p>;
+  }
+
+  if (error) {
+    return <p style={{ padding: "20px", color: "red" }}>{error}</p>;
+  }
 
   return (
     <div
@@ -26,6 +40,10 @@ export default function MasonryPinFeed() {
         padding: "20px"
       }}
     >
+      {pins.length === 0 && (
+        <p style={{ padding: "20px" }}>No pins available</p>
+      )}
+
       {pins.map((pin) => (
         <div
           key={pin.id}
