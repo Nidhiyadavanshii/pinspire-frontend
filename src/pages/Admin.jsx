@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 
 function Admin() {
 
@@ -11,7 +12,7 @@ function Admin() {
         e.preventDefault();
 
         try {
-            await axios.post("https://pinspire-backend.onrender.com", {
+            await axios.post(API_BASE_URL, {
                 title,
                 image,
                 category,

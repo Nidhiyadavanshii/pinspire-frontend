@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 
 export default function MasonryPinFeed() {
   const [pins, setPins] = useState([]);
@@ -10,7 +11,7 @@ export default function MasonryPinFeed() {
 
   const fetchPins = async () => {
     try {
-      const res = await axios.get("https://pinspire-backend.onrender.com/api/pins/all");
+      const res = await axios.get(`${API_BASE_URL}/api/pins/all`);
       setPins(res.data);
     } catch (error) {
       console.log("Error fetching pins:", error);

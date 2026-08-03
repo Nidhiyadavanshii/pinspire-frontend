@@ -2,7 +2,7 @@
 // Every page/component MUST use apiGet/apiPost/apiPut/apiDelete — never a hand-rolled fetch.
 // Paths come from .api_contract.json — the single source of truth shared with the backend generator.
 
-export const API_BASE_URL = ""; // same-origin; never hardcode http://localhost
+export const API_BASE_URL = "https://pinspire-backend.onrender.com";
 
 // UNAVAILABLE ENDPOINTS — the backend does NOT register these routes; calling them returns 404.
 // Do NOT fetch these paths (not via the helpers, not via raw fetch). Use static/local data instead:
