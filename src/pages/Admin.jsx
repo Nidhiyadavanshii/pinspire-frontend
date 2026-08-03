@@ -1,56 +1,61 @@
 import { useState } from "react";
-import axios from "axios";
-import { API_BASE_URL } from "../config/api";
+import { apiPost } from "../config/api";
 
-function Admin() {
+export default function Admin() {
+  const [title, setTitle] = useState("");
+  const [image, setImage] = useState("");
+  const [category, setCategory] = useState("");
 
-    const [title, setTitle] = useState("");
-    const [image, setImage] = useState("");
-    const [category, setCategory] = useState("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    try {
+      await apiPost("/api/pins/create", {
+        title,
+        image,
+        category
+      });
 
-        try {
-            await axios.post(API_BASE_URL, {
-                title,
-                image,
-                category,
-            });
+      alert("Pin Created ✅");
 
-            alert("Pin Added ✅");
-        } catch (err) {
-            console.log(err);
-        }
-    };
+      // clear form
+      setTitle("");
+      setImage("");
+      setCategory("");
+    } catch (error) {
+      console.log("Create error:", error);
+      alert("Error creating pin");
+    }
+  };
 
-    return (
-        <div style={{ padding: "40px" }}>
-            <h2>Add Pin (Admin)</h2>
+  return (
+    <div style={{ padding: "40px" }}>
+      <h2>Create Pin</h2>
 
-            <form onSubmit={handleSubmit}>
-                <input
-                    placeholder="Title"
-                    onChange={(e) => setTitle(e.target.value)}
-                />
-                <br /><br />
+      <form onSubmit={handleSubmit}>
+        <input
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <br /><br />
 
-                <input
-                    placeholder="Image URL"
-                    onChange={(e) => setImage(e.target.value)}
-                />
-                <br /><br />
+        <input
+          placeholder="Image URL"
+          value={image}
+          onChange={(e) => setImage(e.target.value)}
+        />
+        <br /><br />
 
-                <input
-                    placeholder="Category"
-                    onChange={(e) => setCategory(e.target.value)}
-                />
-                <br /><br />
+        <input
+          placeholder="Category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        />
+        <br /><br />
 
-                <button>Add Pin</button>
-            </form>
-        </div>
-    );
+        <button type="submit">Add Pin</button>
+      </form>
+    </div>
+  );
 }
-
-export default Admin;
