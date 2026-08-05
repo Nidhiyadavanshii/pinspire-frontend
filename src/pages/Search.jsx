@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search as SearchIcon, X, SlidersHorizontal } from 'lucide-react';
-import { searchPins, CATEGORIES_LIST } from '../data/dummyPins';
+import { searchPins, CATEGORIES_LIST } from '../data/pinsStore';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ScrollToTopButton from '../components/ScrollToTopButton';

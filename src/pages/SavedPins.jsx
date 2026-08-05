@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Bookmark, Heart } from 'lucide-react';
-import { ALL_PINS } from '../data/dummyPins';
+import { getAllPins } from '../data/pinsStore';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ScrollToTopButton from '../components/ScrollToTopButton';
@@ -71,7 +71,7 @@ export default function SavedPins() {
   const [selectedPin, setSelectedPin] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const savedPins = ALL_PINS.filter((p) => savedIds.includes(p.id));
+  const savedPins = getAllPins().filter((p) => savedIds.includes(p.id));
 
   const handleUnsave = (id) => {
     const updated = savedIds.filter((sid) => sid !== id);

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Settings, Grid, Bookmark, MapPin, Link as LinkIcon, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { ALL_PINS } from '../data/dummyPins';
+import { getAllPins } from '../data/pinsStore';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ScrollToTopButton from '../components/ScrollToTopButton';
@@ -76,9 +76,10 @@ export default function Profile() {
   const [selectedPin, setSelectedPin] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const allPins = getAllPins();
   const savedPinIds = JSON.parse(localStorage.getItem('savedPins') || '[]');
-  const createdPins = ALL_PINS.filter((_, i) => i % 5 === 0).slice(0, user?.totalPins || 12);
-  const savedPins = ALL_PINS.filter((p) => savedPinIds.includes(p.id)).slice(0, 20);
+  const createdPins = allPins.filter((pin) => pin.userId === user?.id || pin.user === user?.username || pin.isUserCreated).slice(0, user?.totalPins || 12);
+  const savedPins = allPins.filter((p) => savedPinIds.includes(p.id)).slice(0, 20);
 
   const displayPins = activeTab === 'created' ? createdPins : savedPins;
 

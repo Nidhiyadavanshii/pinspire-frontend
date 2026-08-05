@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload as UploadIcon, X, Image as ImageIcon, Check, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { CATEGORIES_LIST } from '../data/dummyPins';
+import { apiPost } from '../config/api';
+import { CATEGORIES_LIST } from '../data/pinsStore';
+import { createUserPin } from '../data/pinsStore';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { ToastProvider } from '../components/ToastNotifications';
@@ -52,10 +54,38 @@ export default function Upload() {
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({});
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    setLoading(false);
-    setSuccess(true);
-    setTimeout(() => navigate('/profile'), 1500);
+
+    try {
+      const createdPin = createUserPin({
+        title,
+        description,
+        category,
+        image: preview,
+        user: user?.username || 'you',
+        userFullName: user?.fullName || user?.username || 'You',
+        userId: user?.id || 'me',
+      });
+
+      try {
+        await apiPost('/api/pins/create', {
+          title,
+          description,
+          category,
+          image: preview,
+          userId: createdPin.id,
+        });
+      } catch (backendError) {
+        console.warn('Backend pin create unavailable, using local persistence instead:', backendError);
+      }
+
+      await new Promise((r) => setTimeout(r, 800));
+      setLoading(false);
+      setSuccess(true);
+      setTimeout(() => navigate('/profile'), 1200);
+    } catch (error) {
+      setLoading(false);
+      setErrors({ submit: error.message || 'Unable to publish your pin right now.' });
+    }
   };
 
   const handleCancel = () => {
@@ -189,6 +219,10 @@ export default function Upload() {
                   </select>
                   {errors.category && <p className="mt-1 text-xs font-medium" style={{ color: '#e60023' }}>{errors.category}</p>}
                 </div>
+
+                {errors.submit && (
+                  <p className="text-xs font-medium" style={{ color: '#e60023' }}>{errors.submit}</p>
+                )}
 
                 <div className="pt-2 flex items-center gap-3">
                   <motion.button
