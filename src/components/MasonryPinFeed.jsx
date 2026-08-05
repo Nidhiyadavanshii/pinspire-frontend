@@ -28,6 +28,13 @@ export default function MasonryPinFeed() {
 
   useEffect(() => {
     fetchPins();
+
+    const onPinsUpdated = () => {
+      fetchPins();
+    };
+
+    window.addEventListener('pins:updated', onPinsUpdated);
+    return () => window.removeEventListener('pins:updated', onPinsUpdated);
   }, []);
 
   const fetchPins = async () => {

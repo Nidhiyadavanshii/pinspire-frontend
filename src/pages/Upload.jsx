@@ -60,7 +60,7 @@ export default function Upload() {
         title,
         description,
         category,
-        image: preview,
+        image: preview || undefined,
         user: user?.username || 'you',
         userFullName: user?.fullName || user?.username || 'You',
         userId: user?.id || 'me',
@@ -71,12 +71,15 @@ export default function Upload() {
           title,
           description,
           category,
-          image: preview,
+          imageUrl: preview || undefined,
+          image: preview || undefined,
           userId: createdPin.id,
         });
       } catch (backendError) {
         console.warn('Backend pin create unavailable, using local persistence instead:', backendError);
       }
+
+      window.dispatchEvent(new CustomEvent('pins:updated', { detail: { pin: createdPin } }));
 
       await new Promise((r) => setTimeout(r, 800));
       setLoading(false);
