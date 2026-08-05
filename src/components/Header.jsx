@@ -16,6 +16,7 @@ import {
   LayoutGrid,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import MessagePanel from './MessagePanel';
 
 const navLinks = [
   { label: 'Home', route: '/' },
@@ -32,6 +33,7 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [showMessages, setShowMessages] = useState(false);
   const searchRef = useRef(null);
   const profileRef = useRef(null);
 
@@ -263,6 +265,7 @@ export default function Header() {
               type="button"
               className="hidden rounded-full p-2.5 transition-colors hover:bg-[#f6f6f3] sm:block"
               aria-label="Messages"
+              onClick={() => setShowMessages(true)}
             >
               <MessageCircle size={22} style={{ color: '#62625b' }} />
             </button>
@@ -439,6 +442,8 @@ export default function Header() {
           </form>
         </div>
       </motion.header>
+
+      <MessagePanel isOpen={showMessages} onClose={() => setShowMessages(false)} />
 
       {/* Mobile menu drawer */}
       <AnimatePresence>

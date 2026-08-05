@@ -186,6 +186,11 @@ export default function Home() {
             {/* Feature bento tiles */}
             <section className="mx-auto max-w-7xl px-6 py-8 md:py-10">
               <SectionReveal>
+                <div className="mb-4 flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-[#f6f6f3] px-3 py-1.5 text-xs font-semibold text-[#62625b]">✨ Discover</span>
+                  <span className="rounded-full bg-[#f6f6f3] px-3 py-1.5 text-xs font-semibold text-[#62625b]">🧠 Mood boards</span>
+                  <span className="rounded-full bg-[#f6f6f3] px-3 py-1.5 text-xs font-semibold text-[#62625b]">💡 Daily picks</span>
+                </div>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {/* Large tile */}
                   <div
