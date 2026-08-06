@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, Bookmark, Share2, ArrowLeft, Send, MoreHorizontal } from 'lucide-react';
-import { getPinById, getRelatedPins } from '../data/pinsStore';
+import { getAllPins, getPinById as getLocalPinById } from '../data/pinsStore';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ScrollToTopButton from '../components/ScrollToTopButton';
 import { ToastProvider } from '../components/ToastNotifications';
+import { apiGet } from '../config/api';
 
 const PS = { fontFamily: "'Pin Sans', 'Inter', ui-sans-serif, system-ui, sans-serif" };
 
@@ -16,6 +17,32 @@ const MOCK_COMMENTS = [
   { id: 'c2', username: 'design_mike', text: 'Great shot! What camera did you use?', time: '5h ago', likes: 4 },
   { id: 'c3', username: 'travel_june', text: 'Adding this to my travel bucket list immediately!', time: '1d ago', likes: 28 },
 ];
+
+function normalizePin(rawPin, fallbackId = '') {
+  if (!rawPin) return null;
+  const id = rawPin.id ?? fallbackId;
+  return {
+    ...rawPin,
+    id: String(id),
+    title: rawPin.title || 'Untitled Pin',
+    description: rawPin.description || '',
+    image: rawPin.imageUrl || rawPin.image || '',
+    user: rawPin.user || rawPin.username || 'unknown',
+    userFullName: rawPin.userFullName || rawPin.user || 'Unknown',
+    category: rawPin.category || 'General',
+    likes: rawPin.likes ?? 0,
+  };
+}
+
+function buildRelatedPins(pin, candidates = []) {
+  if (!pin) return [];
+  const currentId = String(pin.id || '');
+  return candidates
+    .filter(Boolean)
+    .filter((candidate) => String(candidate.id) !== currentId)
+    .filter((candidate) => (candidate.category || 'General') === (pin.category || 'General'))
+    .slice(0, 6);
+}
 
 function Avatar({ username, size = 32 }) {
   const initial = (username || 'U')[0].toUpperCase();
@@ -58,18 +85,93 @@ export default function PinDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const pin = getPinById(id);
-  const related = pin ? getRelatedPins(pin, 12) : [];
+  const [pin, setPin] = useState(null);
+  const [related, setRelated] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('savedPins') || '[]').includes(id); }
+    try { return JSON.parse(localStorage.getItem('savedPins') || '[]').includes(String(id)); }
     catch { return false; }
   });
-  const [likeCount, setLikeCount] = useState(pin?.likes || 0);
+  const [likeCount, setLikeCount] = useState(0);
   const [comments, setComments] = useState(MOCK_COMMENTS);
   const [commentText, setCommentText] = useState('');
   const [shared, setShared] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadPin = async () => {
+      if (!id) {
+        setPin(null);
+        setRelated([]);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setError('');
+
+      try {
+        const pinData = await apiGet(`/api/pins/${id}`);
+        const normalizedPin = normalizePin(pinData, id);
+
+        if (!isMounted) return;
+        setPin(normalizedPin);
+        setLikeCount(normalizedPin?.likes || 0);
+
+        let allPins = [];
+        try {
+          const response = await apiGet('/api/pins/all');
+          const backendPins = Array.isArray(response) ? response : [];
+          allPins = backendPins.map((item) => normalizePin(item, item.id));
+        } catch {
+          allPins = [];
+        }
+
+        const fallbackPins = getAllPins().map((item) => normalizePin(item, item.id)).filter(Boolean);
+        const mergedPins = [
+          ...allPins,
+          ...fallbackPins.filter((item) => !allPins.some((candidate) => String(candidate.id) === String(item.id))),
+        ];
+        setRelated(buildRelatedPins(normalizedPin, mergedPins));
+      } catch {
+        const fallbackPin = normalizePin(getLocalPinById(id), id);
+        if (!isMounted) return;
+
+        if (fallbackPin) {
+          setPin(fallbackPin);
+          setLikeCount(fallbackPin.likes || 0);
+          const fallbackPins = getAllPins().map((item) => normalizePin(item, item.id)).filter(Boolean);
+          setRelated(buildRelatedPins(fallbackPin, fallbackPins));
+        } else {
+          setPin(null);
+          setRelated([]);
+          setError('This pin could not be loaded right now.');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadPin();
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  useEffect(() => {
+    try {
+      const savedIds = JSON.parse(localStorage.getItem('savedPins') || '[]');
+      setSaved(savedIds.includes(String(id)));
+    } catch {
+      setSaved(false);
+    }
+  }, [id]);
 
   const handleLike = () => {
     setLiked((v) => !v);
@@ -108,10 +210,20 @@ export default function PinDetails() {
     setCommentText('');
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3" style={{ backgroundColor: '#ffffff', ...PS }}>
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#e60023] border-t-transparent" />
+        <p className="text-sm font-semibold" style={{ color: '#62625b' }}>Loading pin...</p>
+      </div>
+    );
+  }
+
   if (!pin) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ backgroundColor: '#ffffff', ...PS }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-6 text-center" style={{ backgroundColor: '#ffffff', ...PS }}>
         <h2 className="text-2xl font-bold" style={{ color: '#000000' }}>Pin not found</h2>
+        <p className="max-w-md text-sm" style={{ color: '#62625b' }}>{error || 'The pin you are looking for may have been removed or is unavailable right now.'}</p>
         <Link to="/" className="px-5 py-2.5 rounded-full text-sm font-bold text-white" style={{ backgroundColor: '#e60023' }}>
           Back to home
         </Link>
@@ -144,7 +256,7 @@ export default function PinDetails() {
             {/* Image */}
             <div className="relative" style={{ backgroundColor: '#f6f6f3' }}>
               <img
-                src={pin.image}
+                src={pin.image || 'https://picsum.photos/seed/pin-fallback/800/1000'}
                 alt={pin.title}
                 className="w-full h-full object-cover"
                 style={{ minHeight: 400, maxHeight: 600 }}

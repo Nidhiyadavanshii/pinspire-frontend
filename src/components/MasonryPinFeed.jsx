@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiGet } from "../config/api";
 
 function buildFallbackImage(seed) {
@@ -21,6 +22,7 @@ function getPinImage(pin, index) {
 }
 
 export default function MasonryPinFeed() {
+  const navigate = useNavigate();
   const [pins, setPins] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,9 +64,11 @@ export default function MasonryPinFeed() {
   return (
     <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 p-5 space-y-4">
       {displayPins.map((pin, index) => (
-        <div
+        <button
+          type="button"
           key={pin.id}
-          className="break-inside-avoid rounded-xl overflow-hidden shadow-md bg-white"
+          onClick={() => pin?.id && navigate(`/pin/${pin.id}`)}
+          className="w-full break-inside-avoid overflow-hidden rounded-[18px] bg-white text-left shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-transform duration-200 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,0,0,0.12)]"
         >
           <img
             src={getPinImage(pin, index)}
@@ -75,11 +79,11 @@ export default function MasonryPinFeed() {
             <h4 className="font-semibold text-gray-800">
               {pin.title}
             </h4>
-            <p className="text-sm text-gray-500">
+            <p className="mt-1 text-sm text-gray-500">
               {pin.description}
             </p>
           </div>
-        </div>
+        </button>
       ))}
     </div>
   );

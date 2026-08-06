@@ -15,7 +15,6 @@ import BoardDetail from './pages/BoardDetail';
 import NotFound from './pages/NotFound';
 import Admin from "./pages/Admin";
 
-<Route path="/admin" element={<Admin />} />
 export default function App() {
   return (
     <AuthProvider>
